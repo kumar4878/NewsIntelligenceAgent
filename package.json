@@ -1,0 +1,24 @@
+{
+  "name": "news-intelligence-agent",
+  "version": "1.0.0",
+  "description": "Personal News Intelligence Agent PWA – Agriculture, AI & Indian Business",
+  "scripts": {
+    "build": "echo 'Static site – no build step'",
+    "dev": "netlify dev",
+    "invoke:pipeline": "netlify functions:invoke daily-pipeline"
+  },
+  "dependencies": {
+    "@netlify/blobs": "^8.1.0",
+    "@netlify/functions": "^2.8.1",
+    "rss-parser": "^3.13.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "netlify-cli": "^17.0.0",
+    "typescript": "^5.4.5"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

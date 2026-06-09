@@ -1,0 +1,15 @@
+[build]
+  publish = "public"
+  command = "echo 'Static site - no build step'"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+[dev]
+  framework = "#static"
+  targetPort = 8888
+
+# Scheduled function: 06:30 IST = 01:00 UTC every day
+[functions."daily-pipeline"]
+  schedule = "0 1 * * *"
