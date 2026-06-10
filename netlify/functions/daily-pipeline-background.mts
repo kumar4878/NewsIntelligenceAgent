@@ -5,6 +5,7 @@ import { classifyArticles } from "./_lib/classifier.js";
 import { scoreAndSelect } from "./_lib/scorer.js";
 import { summarizeArticles, type ArticleSummary } from "./_lib/summarizer.js";
 import type { Category } from "./_lib/sources.js";
+import { sendPushNotifications } from "./_lib/notifier.js";
 
 export interface DailyBriefing {
   date: string;                        // YYYY-MM-DD IST
@@ -88,6 +89,13 @@ export default async function handler(): Promise<Response> {
     await store.set("latest.json", briefingJson, {
       metadata: { date: today },
     });
+
+    // ── Step 9: Send Push Notifications ──────────────────────────────────
+    try {
+      await sendPushNotifications(briefing);
+    } catch (pushErr) {
+      console.error("[Pipeline] Error sending push notifications:", pushErr);
+    }
 
     const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
     console.log(`\n[Pipeline] ✅ Complete in ${elapsed}s`);

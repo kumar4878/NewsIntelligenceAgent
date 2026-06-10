@@ -97,3 +97,54 @@ async function cacheFirstStrategy(request) {
     return new Response("Offline", { status: 503 });
   }
 }
+
+// ── Push Event: show notification ───────────────────────────────────────────
+self.addEventListener("push", (event) => {
+  if (!event.data) return;
+
+  try {
+    const data = event.data.json();
+    const options = {
+      body: data.body || "",
+      icon: "/icons/icon-192.png",
+      badge: "/icons/icon-192.png",
+      tag: "news-brief-notification", // single notification replacing older ones
+      data: data.data || {},
+    };
+
+    event.waitUntil(
+      self.registration.showNotification(data.title || "NewsBrief Update", options)
+    );
+  } catch (err) {
+    console.error("[SW] Error showing push notification:", err);
+  }
+});
+
+// ── Notification Click: open / focus application window ──────────────────────
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+
+  const urlToOpen = new URL(event.notification.data?.url || "/?tab=today", self.location.origin).href;
+
+  event.waitUntil(
+    self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((windowClients) => {
+      // Check if there is already a window open with this app
+      for (const client of windowClients) {
+        if (client.url === urlToOpen || client.url.startsWith(self.location.origin)) {
+          if ("focus" in client) {
+            // If tab query changes, navigate to the target url
+            if (client.url !== urlToOpen) {
+              return client.navigate(urlToOpen).then((c) => c.focus());
+            }
+            return client.focus();
+          }
+        }
+      }
+      // If no window is open, open a new one
+      if (self.clients.openWindow) {
+        return self.clients.openWindow(urlToOpen);
+      }
+    })
+  );
+});
+

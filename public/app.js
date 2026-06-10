@@ -6,6 +6,7 @@
 // ── Constants ────────────────────────────────────────────────────────────────
 const API_BASE = '/.netlify/functions';
 const STORAGE_KEY = 'news-brief-settings';
+const VAPID_PUBLIC_KEY = 'BOMmYn5aqBD6gWSiZ_HVRCnHG9FRYbYtRtSTuVe0dcECAd0RmbapMqTTBmzWwOd2mT8cv5ITMgwkO_jxwIugx08';
 const CATEGORY_META = {
   agriculture: { label: 'Agriculture',           icon: '🌾', cls: 'agri', id: 'section-agriculture' },
   ai:          { label: 'Artificial Intelligence', icon: '🤖', cls: 'ai',   id: 'section-ai' },
@@ -722,6 +723,142 @@ function updateCronPreview(istTime) {
   if (cronEl) cronEl.textContent = cron;
 }
 
+// ── Push Notification Helpers ─────────────────────────────────────────────────
+function urlBase64ToUint8Array(base64String) {
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding)
+    .replace(/\-/g, '+')
+    .replace(/_/g, '/');
+  const rawData = window.atob(base64);
+  const outputArray = new Uint8Array(rawData.length);
+  for (let i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i);
+  }
+  return outputArray;
+}
+
+async function getPushSubscription() {
+  if (!('serviceWorker' in navigator) || !('PushManager' in window)) return null;
+  const reg = await navigator.serviceWorker.ready;
+  return reg.pushManager.getSubscription();
+}
+
+async function updatePushStatusUI() {
+  const toggle = $('toggle-push');
+  const label = $('push-status-label');
+  if (!toggle || !label) return;
+
+  if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+    toggle.disabled = true;
+    label.textContent = 'Unsupported by browser';
+    return;
+  }
+
+  if (Notification.permission === 'denied') {
+    toggle.checked = false;
+    toggle.disabled = true;
+    label.textContent = 'Blocked by browser permissions';
+    return;
+  }
+
+  try {
+    const sub = await getPushSubscription();
+    if (sub) {
+      toggle.checked = true;
+      label.textContent = 'Active (Alerts enabled)';
+    } else {
+      toggle.checked = false;
+      label.textContent = 'Receive alerts when daily briefing is ready';
+    }
+  } catch (err) {
+    console.error('[Push] Error checking subscription:', err);
+    label.textContent = 'Error checking status';
+  }
+}
+
+async function subscribeUser() {
+  try {
+    const permission = await Notification.requestPermission();
+    if (permission !== 'granted') {
+      showBanner('error', 'Notification permission denied.', 3000);
+      updatePushStatusUI();
+      return;
+    }
+
+    const reg = await navigator.serviceWorker.ready;
+    const sub = await reg.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+    });
+
+    const res = await fetch(`${API_BASE}/push-subscription`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        subscription: sub,
+        preferences: {
+          showAgri: state.settings.showAgri,
+          showAi: state.settings.showAi,
+          showBiz: state.settings.showBiz
+        }
+      })
+    });
+
+    if (res.ok) {
+      showBanner('success', 'Notifications enabled!', 3000);
+    } else {
+      throw new Error(`Server returned ${res.status}`);
+    }
+  } catch (err) {
+    console.error('[Push] Subscription failed:', err);
+    showBanner('error', 'Could not enable push notifications.', 4000);
+  } finally {
+    updatePushStatusUI();
+  }
+}
+
+async function unsubscribeUser() {
+  try {
+    const sub = await getPushSubscription();
+    if (sub) {
+      await fetch(`${API_BASE}/push-subscription`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ endpoint: sub.endpoint })
+      });
+      await sub.unsubscribe();
+      showBanner('info', 'Notifications disabled.', 3000);
+    }
+  } catch (err) {
+    console.error('[Push] Unsubscribe failed:', err);
+    showBanner('error', 'Error disabling notifications.', 3000);
+  } finally {
+    updatePushStatusUI();
+  }
+}
+
+async function syncPushPreferences() {
+  try {
+    const sub = await getPushSubscription();
+    if (!sub) return;
+
+    await fetch(`${API_BASE}/push-subscription`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        subscription: sub,
+        preferences: {
+          showAgri: state.settings.showAgri,
+          showAi: state.settings.showAi,
+          showBiz: state.settings.showBiz
+        }
+      })
+    });
+  } catch (err) {
+    console.warn('[Push] Failed to sync preferences with server:', err);
+  }
+}
+
 function initSettings() {
   loadSettings();
   applySettingsToUI();
@@ -739,8 +876,25 @@ function initSettings() {
       state.settings[key] = el.checked;
       saveSettings();
       if (state.briefing) renderBriefingContent(state.briefing);
+      // Sync push notifications if categories change
+      if (key !== 'compactMode') {
+        syncPushPreferences();
+      }
     });
   });
+
+  // Push notification toggle
+  const pushToggle = $('toggle-push');
+  if (pushToggle) {
+    pushToggle.addEventListener('change', () => {
+      if (pushToggle.checked) {
+        subscribeUser();
+      } else {
+        unsubscribeUser();
+      }
+    });
+  }
+  updatePushStatusUI();
 
   // Pipeline time input → live cron preview
   const timeInput = $('pipeline-time-input');

@@ -5,7 +5,7 @@ import type { Handler, HandlerEvent } from "@netlify/functions";
 import { getStore, connectLambda } from "@netlify/blobs";
 
 export const handler: Handler = async (event: HandlerEvent) => {
-  connectLambda(event);
+  connectLambda(event as any);
   const corsHeaders = {
     "Access-Control-Allow-Origin": "*",
     "Content-Type": "application/json",

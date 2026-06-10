@@ -26,7 +26,7 @@ async function getBookmarks(store: ReturnType<typeof getStore>): Promise<Bookmar
 }
 
 export const handler: Handler = async (event: HandlerEvent) => {
-  connectLambda(event);
+  connectLambda(event as any);
   const corsHeaders = {
     "Access-Control-Allow-Origin": "*",
     "Content-Type": "application/json",
