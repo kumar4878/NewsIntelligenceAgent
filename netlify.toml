@@ -13,3 +13,7 @@
 # Scheduled function: 06:30 IST = 01:00 UTC every day
 [functions."daily-pipeline"]
   schedule = "0 1 * * *"
+
+# Background function variant for manual HTTP triggers (15-min timeout)
+[functions."daily-pipeline-background"]
+  included_files = ["netlify/functions/_lib/**"]
