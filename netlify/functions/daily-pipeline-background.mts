@@ -1,8 +1,3 @@
-// Daily pipeline – Netlify Scheduled Function
-// Runs at 01:00 UTC (06:30 IST) every day
-// Schedule is set in netlify.toml
-
-import type { Config } from "@netlify/functions";
 import { getStore } from "@netlify/blobs";
 import { fetchAllFeeds } from "./_lib/rss-fetcher.js";
 import { deduplicateArticles } from "./_lib/deduplicator.js";
@@ -129,7 +124,3 @@ export default async function handler(): Promise<Response> {
     });
   }
 }
-
-export const config: Config = {
-  schedule: "0 1 * * *", // 01:00 UTC = 06:30 IST daily
-};

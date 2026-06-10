@@ -2,9 +2,10 @@
 // GET /api/briefing?date=YYYY-MM-DD → returns briefing for specific date
 
 import type { Handler, HandlerEvent } from "@netlify/functions";
-import { getStore } from "@netlify/blobs";
+import { getStore, connectLambda } from "@netlify/blobs";
 
 export const handler: Handler = async (event: HandlerEvent) => {
+  connectLambda(event);
   const corsHeaders = {
     "Access-Control-Allow-Origin": "*",
     "Content-Type": "application/json",

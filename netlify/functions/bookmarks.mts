@@ -3,7 +3,7 @@
 // DELETE /api/bookmarks       → body { url } removes a bookmark
 
 import type { Handler, HandlerEvent } from "@netlify/functions";
-import { getStore } from "@netlify/blobs";
+import { getStore, connectLambda } from "@netlify/blobs";
 
 interface Bookmark {
   url: string;
@@ -26,6 +26,7 @@ async function getBookmarks(store: ReturnType<typeof getStore>): Promise<Bookmar
 }
 
 export const handler: Handler = async (event: HandlerEvent) => {
+  connectLambda(event);
   const corsHeaders = {
     "Access-Control-Allow-Origin": "*",
     "Content-Type": "application/json",
