@@ -1,7 +1,7 @@
 // Service Worker for News Intelligence Agent PWA
 // Strategy: Cache-first for shell assets, Network-first for API
 
-const CACHE_VERSION = "v1";
+const CACHE_VERSION = "v2";
 const SHELL_CACHE = `news-brief-shell-${CACHE_VERSION}`;
 const DATA_CACHE  = `news-brief-data-${CACHE_VERSION}`;
 

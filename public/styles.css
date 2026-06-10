@@ -6,10 +6,10 @@
 /* ── Design Tokens ──────────────────────────────────────────────────────── */
 :root {
   /* Brand */
-  --brand:          #4f46e5;
-  --brand-light:    #ede9fe;
-  --brand-mid:      #818cf8;
-  --brand-dark:     #3730a3;
+  --brand:          #7c3aed;
+  --brand-light:    #f3e8ff;
+  --brand-mid:      #c084fc;
+  --brand-dark:     #5b21b6;
 
   /* Category: Agriculture */
   --agri:           #16a34a;
@@ -38,7 +38,7 @@
   --text-primary:   #0f172a;
   --text-secondary: #475569;
   --text-muted:     #94a3b8;
-  --text-link:      #4f46e5;
+  --text-link:      #7c3aed;
 
   /* Shadows */
   --shadow-xs:      0 1px 2px rgba(0,0,0,.05);
@@ -130,7 +130,7 @@ h1, h2, h3 { font-weight: 700; }
   justify-content: center;
   color: white;
   flex-shrink: 0;
-  box-shadow: 0 2px 8px rgba(79,70,229,.3);
+  box-shadow: 0 2px 8px rgba(124,58,237,.3);
 }
 
 .header-text {
@@ -350,7 +350,7 @@ h1, h2, h3 { font-weight: 700; }
 .search-input::placeholder { color: var(--text-muted); }
 .search-input:focus {
   border-color: var(--brand-mid);
-  box-shadow: 0 0 0 3px rgba(79,70,229,.1);
+  box-shadow: 0 0 0 3px rgba(124,58,237,.1);
 }
 
 .search-clear {
@@ -699,10 +699,10 @@ h1, h2, h3 { font-weight: 700; }
   padding: 10px 20px;
   border-radius: var(--r-pill);
   transition: background .15s, transform .12s, box-shadow .15s;
-  box-shadow: 0 2px 8px rgba(79,70,229,.25);
+  box-shadow: 0 2px 8px rgba(124,58,237,.25);
 }
 
-.btn-primary:hover  { background: var(--brand-dark); box-shadow: 0 4px 12px rgba(79,70,229,.35); }
+.btn-primary:hover  { background: var(--brand-dark); box-shadow: 0 4px 12px rgba(124,58,237,.35); }
 .btn-primary:active { transform: scale(.96); }
 
 /* ── History Tab ────────────────────────────────────────────────────────── */
@@ -728,7 +728,7 @@ h1, h2, h3 { font-weight: 700; }
 
 .history-card:hover {
   border-color: var(--brand-mid);
-  box-shadow: 0 4px 12px rgba(79,70,229,.1);
+  box-shadow: 0 4px 12px rgba(124,58,237,.1);
 }
 .history-card:active { transform: scale(.98); }
 
@@ -1096,7 +1096,7 @@ h1, h2, h3 { font-weight: 700; }
 
 .time-input:focus {
   border-color: var(--brand-mid);
-  box-shadow: 0 0 0 3px rgba(79,70,229,.1);
+  box-shadow: 0 0 0 3px rgba(124,58,237,.1);
 }
 
 .pipeline-cron-preview {
@@ -1169,7 +1169,7 @@ h1, h2, h3 { font-weight: 700; }
   font-weight: 600;
   border-radius: var(--r-lg);
   transition: background .15s, transform .12s, box-shadow .15s;
-  box-shadow: 0 2px 8px rgba(79,70,229,.2);
+  box-shadow: 0 2px 8px rgba(124,58,237,.2);
 }
 
 .btn-save-schedule:hover { background: var(--brand-dark); }
@@ -1182,12 +1182,12 @@ h1, h2, h3 { font-weight: 700; }
   font-size: 12.5px;
   font-weight: 700;
   color: white;
-  background: linear-gradient(135deg, #7c3aed, #4f46e5);
+  background: linear-gradient(135deg, #a855f7, #7c3aed);
   padding: 8px 14px;
   border-radius: var(--r-pill);
   transition: opacity .15s, transform .12s;
   white-space: nowrap;
-  box-shadow: 0 2px 6px rgba(79,70,229,.3);
+  box-shadow: 0 2px 6px rgba(124,58,237,.3);
 }
 
 .btn-run-now:hover   { opacity: .9; }
