@@ -35,8 +35,8 @@ export const handler: Handler = async (event: HandlerEvent) => {
   }
 
   const blobKey = dateParam
-    ? `briefings/${dateParam}.json`
-    : "briefings/latest.json";
+    ? `${dateParam}.json`
+    : "latest.json";
 
   try {
     const raw = await store.get(blobKey);

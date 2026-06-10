@@ -87,10 +87,10 @@ export default async function handler(): Promise<Response> {
 
     // ── Step 8: Persist to Netlify Blobs ─────────────────────────────────
     const briefingJson = JSON.stringify(briefing);
-    await store.set(`briefings/${today}.json`, briefingJson, {
+    await store.set(`${today}.json`, briefingJson, {
       metadata: { date: today, articleCount: summaries.length },
     });
-    await store.set("briefings/latest.json", briefingJson, {
+    await store.set("latest.json", briefingJson, {
       metadata: { date: today },
     });
 
@@ -118,7 +118,7 @@ export default async function handler(): Promise<Response> {
       error: message,
     };
     try {
-      await store.set("briefings/latest.json", JSON.stringify(errorBriefing));
+      await store.set("latest.json", JSON.stringify(errorBriefing));
     } catch {
       // swallow blob error
     }
