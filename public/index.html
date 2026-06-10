@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#6c63ff" />
+  <meta name="theme-color" content="#4f46e5" />
   <meta name="description" content="Personal daily news briefing covering Agriculture, AI, and Indian Business — curated and summarized by AI." />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="NewsBrief" />
 
   <title>NewsBrief – Kumar's Daily Intelligence</title>
@@ -17,10 +17,13 @@
   <link rel="apple-touch-icon" href="/icons/icon-192.png" />
   <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png" />
 
-  <!-- Styles -->
-  <link rel="stylesheet" href="/styles.css" />
+  <!-- Google Fonts: Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="/styles.css" />
 </head>
 <body>
 
@@ -28,29 +31,45 @@
 
   <!-- ── Header ─────────────────────────────────────────────────────────── -->
   <header class="app-header">
-    <div class="header-left">
-      <span class="header-greeting">Good Morning, Kumar ☀️</span>
-      <span class="header-date" id="header-date">Loading…</span>
+    <div class="header-brand">
+      <div class="header-logo">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/>
+          <path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/>
+        </svg>
+      </div>
+      <div class="header-text">
+        <span class="header-title">NewsBrief</span>
+        <span class="header-greeting" id="header-greeting">Good Morning, Kumar</span>
+      </div>
     </div>
-    <div class="header-actions">
-      <button id="btn-refresh" class="btn-refresh" title="Refresh briefing" aria-label="Refresh">
+    <div class="header-right">
+      <span class="header-date" id="header-date"></span>
+      <button id="btn-refresh" class="btn-icon-refresh" title="Refresh briefing" aria-label="Refresh">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/>
+          <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
+          <path d="M21 3v5h-5"/>
+          <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
+          <path d="M8 16H3v5"/>
         </svg>
       </button>
     </div>
   </header>
 
-  <!-- ── Status Banner ──────────────────────────────────────────────────── -->
+  <!-- ── Status Toast ───────────────────────────────────────────────────── -->
   <div id="status-banner" class="status-banner hidden" role="alert" aria-live="polite">
-    <span id="status-icon">ℹ️</span>
+    <span id="status-icon"></span>
     <span id="status-text"></span>
+    <button class="banner-close" id="banner-close" aria-label="Dismiss">×</button>
   </div>
 
   <!-- ── Pull-to-refresh ────────────────────────────────────────────────── -->
   <div id="ptr-indicator" class="ptr-indicator">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>
-    <span>Pull to refresh</span>
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
+      <path d="M21 3v5h-5"/>
+    </svg>
+    <span>Release to refresh</span>
   </div>
 
   <!-- ══════════════════════════════════════════════════════════════════════
@@ -58,30 +77,70 @@
   ══════════════════════════════════════════════════════════════════════ -->
   <div id="tab-today" class="tab-view active">
 
-    <!-- Skeleton (shown while loading) -->
-    <div id="skeleton-loader">
+    <!-- Stats Bar -->
+    <div id="stats-bar" class="stats-bar hidden">
+      <div class="stat-chip agri-chip" id="stat-agri">
+        <span class="stat-icon">🌾</span>
+        <span class="stat-count" id="count-agri">0</span>
+      </div>
+      <div class="stat-chip ai-chip" id="stat-ai">
+        <span class="stat-icon">🤖</span>
+        <span class="stat-count" id="count-ai">0</span>
+      </div>
+      <div class="stat-chip biz-chip" id="stat-biz">
+        <span class="stat-icon">📈</span>
+        <span class="stat-count" id="count-biz">0</span>
+      </div>
+      <div class="stat-divider"></div>
+      <span class="stat-generated" id="stat-generated"></span>
+    </div>
+
+    <!-- Search + Filter Bar -->
+    <div id="search-filter-bar" class="search-filter-bar hidden">
+      <div class="search-input-wrap">
+        <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+        </svg>
+        <input type="search" id="search-input" class="search-input" placeholder="Search headlines…" autocomplete="off" />
+        <button id="search-clear" class="search-clear hidden" aria-label="Clear search">×</button>
+      </div>
+      <div class="filter-pills" id="filter-pills">
+        <button class="filter-pill active" data-filter="all">All</button>
+        <button class="filter-pill" data-filter="agriculture">🌾 Agri</button>
+        <button class="filter-pill" data-filter="ai">🤖 AI</button>
+        <button class="filter-pill" data-filter="business">📈 Biz</button>
+      </div>
+    </div>
+
+    <!-- Skeleton Loader -->
+    <div id="skeleton-loader" class="skeleton-container">
+      <div class="skeleton-stats-bar">
+        <div class="sk sk-chip"></div>
+        <div class="sk sk-chip"></div>
+        <div class="sk sk-chip"></div>
+      </div>
       <div class="skeleton-section">
-        <div class="skeleton-header"></div>
+        <div class="sk sk-header"></div>
         <div class="skeleton-card">
-          <div class="skeleton-line title"></div>
-          <div class="skeleton-line body"></div>
-          <div class="skeleton-line body2"></div>
-          <div class="skeleton-line short"></div>
+          <div class="sk sk-title"></div>
+          <div class="sk sk-line w80"></div>
+          <div class="sk sk-line w60"></div>
+          <div class="sk sk-short"></div>
         </div>
         <div class="skeleton-card">
-          <div class="skeleton-line title"></div>
-          <div class="skeleton-line body3"></div>
-          <div class="skeleton-line body2"></div>
-          <div class="skeleton-line short"></div>
+          <div class="sk sk-title"></div>
+          <div class="sk sk-line w90"></div>
+          <div class="sk sk-line w70"></div>
+          <div class="sk sk-short"></div>
         </div>
       </div>
       <div class="skeleton-section">
-        <div class="skeleton-header"></div>
+        <div class="sk sk-header"></div>
         <div class="skeleton-card">
-          <div class="skeleton-line title"></div>
-          <div class="skeleton-line body"></div>
-          <div class="skeleton-line body3"></div>
-          <div class="skeleton-line short"></div>
+          <div class="sk sk-title"></div>
+          <div class="sk sk-line w80"></div>
+          <div class="sk sk-line w50"></div>
+          <div class="sk sk-short"></div>
         </div>
       </div>
     </div>
@@ -93,11 +152,27 @@
       <div id="section-business"    class="category-section biz"></div>
     </div>
 
-    <!-- Empty state (shown when no briefing) -->
+    <!-- No results state (from search) -->
+    <div id="no-results" class="empty-state" style="display:none;">
+      <div class="empty-icon">🔍</div>
+      <h3>No Results</h3>
+      <p>No articles match your search. Try a different keyword.</p>
+    </div>
+
+    <!-- Empty state (no briefing yet) -->
     <div id="empty-today" class="empty-state" style="display:none;">
-      <div class="empty-icon">📰</div>
+      <div class="empty-illustration">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#c7d2fe" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/>
+          <path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/>
+        </svg>
+      </div>
       <h3>No Briefing Yet</h3>
-      <p>Today's briefing is generated at 06:30 IST.<br/>Check back after that, or trigger a manual run.</p>
+      <p>Today's briefing will be ready soon.<br>Pipeline runs at <span id="next-run-time" class="highlight-time">06:30 IST</span> daily.</p>
+      <button id="btn-run-now-empty" class="btn-primary mt-12">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Run Pipeline Now
+      </button>
     </div>
 
   </div><!-- /tab-today -->
@@ -106,7 +181,10 @@
        TAB: HISTORY
   ══════════════════════════════════════════════════════════════════════ -->
   <div id="tab-history" class="tab-view">
-    <h2 class="history-header">Past Briefings</h2>
+    <div class="tab-page-header">
+      <h2>Past Briefings</h2>
+      <span class="tab-page-subtitle">Last 7 days</span>
+    </div>
     <div id="history-grid" class="history-grid">
       <div class="empty-state">
         <div class="empty-icon">📅</div>
@@ -119,12 +197,19 @@
        TAB: BOOKMARKS
   ══════════════════════════════════════════════════════════════════════ -->
   <div id="tab-bookmarks" class="tab-view">
-    <h2 class="bookmarks-header">Saved Articles</h2>
+    <div class="tab-page-header">
+      <h2>Saved Articles</h2>
+      <span class="tab-page-subtitle" id="bookmark-count-label"></span>
+    </div>
     <div id="bookmarks-list" class="bookmarks-list">
       <div class="empty-state">
-        <div class="empty-icon">🔖</div>
+        <div class="empty-illustration">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#c7d2fe" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/>
+          </svg>
+        </div>
         <h3>No Bookmarks Yet</h3>
-        <p>Tap the ★ icon on any article to save it here.</p>
+        <p>Tap the bookmark icon on any article to save it here.</p>
       </div>
     </div>
   </div>
@@ -133,37 +218,52 @@
        TAB: SETTINGS
   ══════════════════════════════════════════════════════════════════════ -->
   <div id="tab-settings" class="tab-view">
-    <h2 class="settings-header">Settings</h2>
+    <div class="tab-page-header">
+      <h2>Settings</h2>
+      <span class="tab-page-subtitle">Customize your experience</span>
+    </div>
 
-    <div class="settings-section">
-      <div class="settings-section-title">Categories</div>
+    <!-- SECTION: Categories -->
+    <div class="settings-card">
+      <div class="settings-card-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Categories
+      </div>
       <div class="settings-row">
-        <div class="settings-row-icon">🌾</div>
-        <div class="settings-row-label">
-          <span>Agriculture</span>
-          <small>Crops, weather, agri-tech</small>
+        <div class="settings-row-left">
+          <div class="settings-row-icon agri-bg">🌾</div>
+          <div class="settings-row-label">
+            <span>Agriculture</span>
+            <small>Crops, weather, agri-tech</small>
+          </div>
         </div>
         <label class="toggle">
           <input type="checkbox" id="toggle-agri" checked />
           <div class="toggle-track"></div>
         </label>
       </div>
+      <div class="settings-divider"></div>
       <div class="settings-row">
-        <div class="settings-row-icon">🤖</div>
-        <div class="settings-row-label">
-          <span>Artificial Intelligence</span>
-          <small>AI, ML, enterprise tech</small>
+        <div class="settings-row-left">
+          <div class="settings-row-icon ai-bg">🤖</div>
+          <div class="settings-row-label">
+            <span>Artificial Intelligence</span>
+            <small>AI, ML, enterprise tech</small>
+          </div>
         </div>
         <label class="toggle">
           <input type="checkbox" id="toggle-ai" checked />
           <div class="toggle-track"></div>
         </label>
       </div>
+      <div class="settings-divider"></div>
       <div class="settings-row">
-        <div class="settings-row-icon">📈</div>
-        <div class="settings-row-label">
-          <span>Indian Business</span>
-          <small>Economy, markets, startups</small>
+        <div class="settings-row-left">
+          <div class="settings-row-icon biz-bg">📈</div>
+          <div class="settings-row-label">
+            <span>Indian Business</span>
+            <small>Economy, markets, startups</small>
+          </div>
         </div>
         <label class="toggle">
           <input type="checkbox" id="toggle-biz" checked />
@@ -172,13 +272,19 @@
       </div>
     </div>
 
-    <div class="settings-section" style="margin-top:12px;">
-      <div class="settings-section-title">App</div>
+    <!-- SECTION: Display -->
+    <div class="settings-card">
+      <div class="settings-card-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        Display
+      </div>
       <div class="settings-row">
-        <div class="settings-row-icon">⚡</div>
-        <div class="settings-row-label">
-          <span>Compact Mode</span>
-          <small>Show fewer bullets per article</small>
+        <div class="settings-row-left">
+          <div class="settings-row-icon neutral-bg">⚡</div>
+          <div class="settings-row-label">
+            <span>Compact Mode</span>
+            <small>Show fewer bullets per article</small>
+          </div>
         </div>
         <label class="toggle">
           <input type="checkbox" id="toggle-compact" />
@@ -187,30 +293,95 @@
       </div>
     </div>
 
-    <div class="settings-section" style="margin-top:12px;">
-      <div class="settings-section-title">About</div>
-      <div class="settings-row">
-        <div class="settings-row-icon">📡</div>
-        <div class="settings-row-label">
-          <span>Sources</span>
-          <small>PIB, BusinessLine, ET, AIM, BS…</small>
-        </div>
+    <!-- SECTION: Pipeline Schedule -->
+    <div class="settings-card">
+      <div class="settings-card-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Pipeline Schedule
       </div>
-      <div class="settings-row">
-        <div class="settings-row-icon">🤖</div>
-        <div class="settings-row-label">
-          <span>AI Model</span>
-          <small>Llama 3.3 70B via OpenRouter</small>
+
+      <div class="pipeline-schedule-block">
+        <div class="pipeline-time-row">
+          <div class="pipeline-time-label">
+            <span class="pipeline-time-title">Daily Run Time <span class="badge-ist">IST</span></span>
+            <small>Your preferred time to generate the daily briefing</small>
+          </div>
+          <input type="time" id="pipeline-time-input" class="time-input" value="06:30" />
         </div>
+        <div class="pipeline-cron-preview">
+          <span class="cron-label">Cron expression:</span>
+          <code id="cron-preview" class="cron-code">0 1 * * *</code>
+          <button id="btn-copy-cron" class="btn-copy-cron" title="Copy cron expression">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Copy
+          </button>
+        </div>
+        <p class="pipeline-hint">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          Copy this cron and update <code>netlify.toml</code> to change the server schedule.
+        </p>
+        <button id="btn-save-schedule" class="btn-save-schedule">Save Preferred Time</button>
       </div>
+
+      <div class="settings-divider"></div>
+
+      <!-- Manual Pipeline Trigger -->
       <div class="settings-row">
-        <div class="settings-row-icon">⏰</div>
-        <div class="settings-row-label">
-          <span>Pipeline Time</span>
-          <small>06:30 IST daily (01:00 UTC)</small>
+        <div class="settings-row-left">
+          <div class="settings-row-icon purple-bg">▶</div>
+          <div class="settings-row-label">
+            <span>Run Pipeline Now</span>
+            <small id="last-run-label">Generates today's briefing immediately</small>
+          </div>
         </div>
+        <button id="btn-run-pipeline" class="btn-run-now">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          Run
+        </button>
       </div>
     </div>
+
+    <!-- SECTION: Sources -->
+    <div class="settings-card">
+      <div class="settings-card-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1"/></svg>
+        News Sources
+      </div>
+      <div class="sources-grid">
+        <div class="source-chip agri-source">PIB Agriculture</div>
+        <div class="source-chip agri-source">BusinessLine Agri</div>
+        <div class="source-chip agri-source">Krishi Jagran</div>
+        <div class="source-chip ai-source">AIM</div>
+        <div class="source-chip ai-source">ET Tech</div>
+        <div class="source-chip ai-source">TechCrunch AI</div>
+        <div class="source-chip biz-source">Livemint</div>
+        <div class="source-chip biz-source">Economic Times</div>
+        <div class="source-chip biz-source">Business Standard</div>
+      </div>
+    </div>
+
+    <!-- SECTION: About -->
+    <div class="settings-card">
+      <div class="settings-card-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        About
+      </div>
+      <div class="about-row">
+        <span class="about-label">AI Model</span>
+        <span class="about-value">Llama 3.3 70B via OpenRouter</span>
+      </div>
+      <div class="settings-divider"></div>
+      <div class="about-row">
+        <span class="about-label">Hosted on</span>
+        <span class="about-value">Netlify (Functions + Blobs)</span>
+      </div>
+      <div class="settings-divider"></div>
+      <div class="about-row">
+        <span class="about-label">Version</span>
+        <span class="about-value">1.0.0</span>
+      </div>
+    </div>
+
   </div><!-- /tab-settings -->
 
 </div><!-- /app -->
@@ -218,16 +389,17 @@
 <!-- ── Bottom Navigation ───────────────────────────────────────────────────── -->
 <nav class="bottom-nav" role="navigation" aria-label="Main navigation">
   <button id="nav-today"     class="nav-item active" data-tab="today"     aria-label="Today's briefing">
-    <div class="nav-icon">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/>
+    <div class="nav-icon-wrap">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/>
+        <path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/>
       </svg>
     </div>
     <span class="nav-label">Today</span>
   </button>
   <button id="nav-history"   class="nav-item" data-tab="history"   aria-label="Briefing history">
-    <div class="nav-icon">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <div class="nav-icon-wrap">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 3"/>
         <path d="M12 7v5l4 2"/>
       </svg>
@@ -235,16 +407,16 @@
     <span class="nav-label">History</span>
   </button>
   <button id="nav-bookmarks" class="nav-item" data-tab="bookmarks" aria-label="Bookmarks">
-    <div class="nav-icon">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <div class="nav-icon-wrap">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/>
       </svg>
     </div>
     <span class="nav-label">Saved</span>
   </button>
   <button id="nav-settings"  class="nav-item" data-tab="settings"  aria-label="Settings">
-    <div class="nav-icon">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <div class="nav-icon-wrap">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
         <circle cx="12" cy="12" r="3"/>
       </svg>
